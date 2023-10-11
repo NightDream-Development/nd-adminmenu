@@ -89,6 +89,7 @@ RegisterNetEvent('nd-adminmenu/openmenu', function()
             lib.showMenu('playermenu')
         end        
     end)
+    lib.showMenu('adminmenu')
 end)
 
 CreateThread(function()
