@@ -1,10 +1,8 @@
-local QBCore = exports['qb-core']:GetCoreObject() --Boy what the hell boy
 lib.locale()
 
 RegisterNetEvent('nd-adminmenu/openmenu', function()
-    --print('megyen-e?')
-
-    -- Jármű menü
+    --Prepare any menu
+   -- vehicle menu
     lib.registerMenu({
         id = 'vehiclemenu',
         title = locale('vehicle_menu_title'),
@@ -18,7 +16,6 @@ RegisterNetEvent('nd-adminmenu/openmenu', function()
             {label = locale('vehicle_fix'), description = locale('vehicle_fix_desc')},
         },
     }, function(selected, scrollIndex, args)
-        --print('Kiválasztott jármű opció: '..selected)
         if selected == 1 then
             TriggerEvent('nd-adminmenu/spawnVehicle')
         elseif selected == 2 then
@@ -30,7 +27,7 @@ RegisterNetEvent('nd-adminmenu/openmenu', function()
         end
     end)
 
-    -- Játékos menü
+    -- Player options
     lib.registerMenu({
         id = 'playermenu',
         title = locale('player_option_title'),
@@ -44,12 +41,11 @@ RegisterNetEvent('nd-adminmenu/openmenu', function()
             {label = locale('god_mode'), description = locale('god_mode_desc')},
             {label = locale('spectate'), description = locale('spectate_desc')},
             {label = locale('staff_announcment'), description = locale('staff_announcment_desc')},
-            {label = locale('ban_player'), description = locale('ban_player_desc')},
+            -- {label = locale('ban_player'), description = locale('ban_player_desc')},
             {label = locale('player_revive'), description = locale('player_revive_desc')},
             {label = locale('invisible')},
         },
     }, function(selected, scrollIndex, args)
-       -- print('Kiválasztott játékos opció: '..selected)
         if selected == 1 then
             TriggerEvent('nd-adminmenu/togglenoclip')
             lib.showMenu('playermenu')
@@ -74,7 +70,7 @@ RegisterNetEvent('nd-adminmenu/openmenu', function()
 
     end)
 
-    -- Főmenü
+    -- Main menu
     lib.registerMenu({
         id = 'adminmenu',
         title = locale('menu_title'),
@@ -87,35 +83,13 @@ RegisterNetEvent('nd-adminmenu/openmenu', function()
             {label = locale('player_options'), description = locale('player_options_desc'), menuId = 'playermenu'},
         },
     }, function(selected, scrollIndex, args)
-        --print('Kiválasztott menüpont: '..selected)
         if selected == 1 then
             lib.showMenu('vehiclemenu')
         elseif selected == 2 then
             lib.showMenu('playermenu')
         end        
     end)
-
-    QBCore.Functions.TriggerCallback('nd-adminmenu/CheckPerms', function(result)
-        if result == true then
-            lib.showMenu('adminmenu')
-        else
-            lib.notify({
-                id = 'no perm',
-                title = locale('menu_title'),
-                description = locale('no_perm'),
-                position = 'top',
-                style = {
-                    backgroundColor = '#141517',
-                    color = '#C1C2C5',
-                    ['.description'] = {
-                        color = '#909296'
-                    }
-                },
-                icon = 'ban',
-                iconColor = '#C53030'
-            })
-        end
-    end)
+    lib.showMenu('adminmenu')
 end)
 
 CreateThread(function()
@@ -124,7 +98,7 @@ CreateThread(function()
      description = locale('keybind_name'),
      defaultKey = Config.menukeybind,
      onReleased = function(self)
-        TriggerEvent('nd-adminmenu/openmenu')
+        ExecuteCommand('openadmin')
      end,
     })
 end)

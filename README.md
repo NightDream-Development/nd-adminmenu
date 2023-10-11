@@ -14,11 +14,11 @@
 
 - [Ox Libary](https://github.com/overextended/ox_lib/releases) v3.6.1 (Newer the better!)
 - [oxmysql](https://github.com/overextended/oxmysql/releases) 2.7.0 (Newer the better!)
-- qb-core (As i know there is no specific version but still Newer the better!)
 
 ## Setup
 
-- Dont use qbcore.etc use group.admin,god,mod!
+- Just drag and drop the file and start the script!
+(2023.09.12 12:06 = Made it Fully standalone)
 
 
 
