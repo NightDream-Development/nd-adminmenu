@@ -180,12 +180,71 @@ RegisterNetEvent('nd-adminmenu/deleteVehicle', function()
 end)
 
 --spectate (yep txAdmin)
+--as of 2024.05.08 no txadmin shit!
+local isSpectating = false
+local targetPlayer = nil
+local lastcoord = nil
+
+local function stopSpectate()
+    isSpectating = false
+    targetPlayer = nil
+    TriggerEvent('nd-adminmenu/showids')
+end
+
+local function startSpectate(targetId)
+    if targetId == cache.serverId then
+        print('ID cannot be tha same as yours!')
+        return
+    end
+    if isSpectating then
+        stopSpectate()
+    end
+    if GetPlayerFromServerId(targetId) == -1 then
+        print('this ID is not online')
+        return
+    end
+    if targetId then
+        targetPlayer = GetPlayerPed(GetPlayerFromServerId(targetId))
+        if targetPlayer then
+            isSpectating = true
+            lastcoord = GetEntityCoords(cache.ped)
+            TriggerEvent('nd-adminmenu/showids')
+            CreateThread(function()
+                local playerPed = cache.ped
+                NetworkSetInSpectatorMode(true, targetPlayer)
+                
+                while isSpectating do
+                    Wait(0)
+                    -- Check if Backspace or Escape is pressed
+                    if IsControlJustPressed(0, 177) or IsControlJustPressed(0, 200) then
+                        stopSpectate()
+                    end
+                    if GetPlayerFromServerId(targetId) == -1 then
+                        stopSpectate()
+                    end
+                    local targetPos = GetEntityCoords(targetPlayer)
+                    FreezeEntityPosition(playerPed, true)
+                    SetEntityCoords(playerPed, targetPos.x, targetPos.y, targetPos.z + 2.0, false, false, false, true)
+                    SetEntityVisible(playerPed, false, false)
+                end        
+
+                NetworkSetInSpectatorMode(false, targetPlayer)
+                SetEntityVisible(playerPed, true, false)
+                Wait(500)
+                SetEntityCoords(playerPed, lastcoord.x, lastcoord.y, lastcoord.z + 1, false, false, false, true)
+                FreezeEntityPosition(playerPed, false)
+            end)
+        else
+            print("player not found")
+        end
+    else
+        print("invalid player ID")
+    end
+end
+
 RegisterNetEvent('nd-adminmenu/spectateplayer', function()
     local input = lib.inputDialog(locale('spectate'), {locale('spectate_id')})
     if not input then return end
-    local myPed = PlayerPedId()
-    local target = GetPlayerPed(input[1])
-    local myServerId = GetPlayerServerId(PlayerId())
     if input[1] == source then
         lib.notify({
             id = 'admincardelete',
@@ -203,7 +262,9 @@ RegisterNetEvent('nd-adminmenu/spectateplayer', function()
             iconColor = '#C1C2C5'
         })
     else
-    TriggerServerEvent('txsv:req:spectate:start', input[1])
+    --TriggerServerEvent('txsv:req:spectate:start', input[1])
+    startSpectate(input[1])
+    lib.print.info('Function disabled')
     end
 end)
 
